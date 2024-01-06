@@ -75,6 +75,14 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
         status: formData.get('status')
     });
 
+    if (!validatedFields.success) {
+        console.log(validatedFields);
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing Fields. Failed to Update Invoice.',
+        };
+    }
+
     const { customerId, amount, status } = validatedFields.data;
     const amountInCents = amount * 100;
 
@@ -95,7 +103,7 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
 }
 
 export async function deleteInvoice(id: string) {
-    throw new Error('Failed to Delete Invoice');
+    // throw new Error('Failed to Delete Invoice');
     try {
         await sql`DELETE from invoices WHERE id = ${id}`;
         revalidatePath('/dashboard/invoices')
